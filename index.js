@@ -12,7 +12,6 @@ app.use(cors());
 app.use(express.json());
 
 
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.pta9f.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -20,11 +19,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        const itemsCollection = client.db('mellowSaffron').collection('item');
+        const itemCollection = client.db('mellowSaffron').collection('item');
 
         app.get('/item', async (req, res) => {
             const query = {};
-            const cursor = itemsCollection.find(query);
+            const cursor = itemCollection.find(query);
             const items = await cursor.toArray();
             res.send(items);
         });
@@ -32,8 +31,15 @@ async function run() {
         app.get('/item/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
-            const item = await itemsCollection.findOne(query);
+            const item = await itemCollection.findOne(query);
             res.send(item);
+        });
+
+        // POST
+        app.post('/item', async(req, res) => {
+            const newItem = req.body;
+            const result = await itemCollection.insertOne(newItem);
+            res.send(result);
         })
 
     }
