@@ -40,7 +40,15 @@ async function run() {
             const newItem = req.body;
             const result = await itemCollection.insertOne(newItem);
             res.send(result);
-        })
+        });
+
+        // DELETE
+        app.delete('/item/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await itemCollection.deleteOne(query);
+            res.send(result);
+        });
 
     }
     finally {
