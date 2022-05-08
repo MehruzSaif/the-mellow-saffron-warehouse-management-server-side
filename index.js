@@ -35,6 +35,22 @@ async function run() {
             res.send(item);
         });
 
+        // PUT
+        
+        app.put("/inventory/:id", async (req, res) => {
+            const id = req.params.id;
+            const updateQuantity = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const update = {
+              $set: {
+                updateQuantity,
+              },
+            };
+            const result = await dbs.updateOne(filter, update, options);
+            res.send(result);
+          });
+
         // POST
         app.post('/item', async (req, res) => {
             const newItem = req.body;
